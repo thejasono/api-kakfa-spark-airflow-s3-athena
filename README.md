@@ -35,6 +35,17 @@ Populate **both** environment files before you start the stack:
 >
 > Paste the outputs into `.env` so the running containers never reuse the placeholder values committed to the repository.
 
+### Preparing the repository for a public release
+
+Before you push the project to a public Git host, run through a final safety sweep:
+
+1. **Double-check committed environment files.** Confirm that `.env`, `.env.aws`, and any other checked-in samples only contain placeholders or intentionally low-privilege demo credentials.
+2. **Search the tree for secrets.** Use a scanner such as [`trufflehog`](https://github.com/trufflesecurity/trufflehog), [`gitleaks`](https://github.com/gitleaks/gitleaks), or even a quick `rg -i "secret\|token\|key"` to ensure no passwords, API keys, or access tokens slipped into the repository.
+3. **Rotate any values you previously exposed.** If real credentials were ever committed, revoke or rotate them in their upstream service before publishing—removing them from the latest commit does not protect against history inspection.
+4. **Document runtime expectations.** Keep the placeholder instructions above intact (or expand them) so collaborators know to supply their own secure values after cloning.
+
+Once those checks pass, the working tree is safe to publish and new contributors get clear instructions on how to populate secrets locally.
+
 #### Enabling Amazon S3 connectivity
 
 > 📝 **S3 setup checklist** – before you start Docker, work through the following quick list so the streaming job can talk to your bucket:
