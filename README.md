@@ -27,6 +27,14 @@ Populate **both** environment files before you start the stack:
 - `.env` already ships with sane defaults for service configuration (Airflow, Kafka, Spark). Update the S3 bucket/region entries to match your environment.
 - `.env.aws` contains the AWS credentials that the Spark containers load via the Compose `env_file` directive. The repository includes placeholder values so `docker compose` can start, but you must overwrite them with working credentials (for example, paste the output from `aws configure export-credentials --format env`). The Windows helper script `run_spark.ps1` automates this by logging in with AWS SSO, generating a fresh `.env.aws`, and running Compose with those short-lived credentials.
 
+> 🔒 **Secrets checklist** – generate unique values before your first run (or before publishing the repository):
+>
+> - `AIRFLOW_FERNET_KEY`: `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`
+> - `AIRFLOW_SECRET_KEY`: `python -c "import secrets; print(secrets.token_urlsafe(64))"`
+> - `KAFKA_CLUSTER_ID`: `docker run --rm confluentinc/cp-kafka:7.6.1 kafka-storage random-uuid`
+>
+> Paste the outputs into `.env` so the running containers never reuse the placeholder values committed to the repository.
+
 #### Enabling Amazon S3 connectivity
 
 > 📝 **S3 setup checklist** – before you start Docker, work through the following quick list so the streaming job can talk to your bucket:
